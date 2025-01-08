@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom'; // Corrected import
 import { useAuthStore } from '../store/useAuthStore';
 import { Eye, EyeOff, Lock, Mail, MessageSquare, User } from 'lucide-react';
+import AuthImagePattern from '../components/AuthImagePattern';
+import toast from 'react-hot-toast';
 
 const SignUpPage = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
-        fullName: '',
+        fullname: '',
         email: '',
         password: '',
     });
@@ -14,27 +16,26 @@ const SignUpPage = () => {
     const { signUp, isSigningUp } = useAuthStore();
 
     const validateForm = () => {
-        if (!formData.fullName || !formData.email || !formData.password) {
-            alert('All fields are required.');
-            return false;
-        }
-        if (formData.password.length < 6) {
-            alert('Password must be at least 6 characters.');
-            return false;
-        }
+        const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+        console.log("asdfa",formData);
+        
+
+        if( !formData.fullname.trim()) return toast.error("Full Name is required.");
+        if( !formData.email.trim()) return toast.error("Email is required.");
+        if( !emailRegex.test(formData.email)) return toast.error("Invalid email format.")
+        if( !formData.password.trim()) return toast.error("Password is required.");
+        if( formData.password.length < 6) return toast.error("Password must be at least 6 characters.")
+
         return true;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (validateForm()) {
-            try {
-                await signUp(formData);
-                alert('Sign-up successful!');
-            } catch (error) {
-                console.error('Sign-up error:', error);
-                alert('Failed to sign up. Please try again.');
-            }
+
+        const success = validateForm();
+
+        if(success == true){
+            signUp(formData)
         }
     };
 
@@ -71,9 +72,9 @@ const SignUpPage = () => {
                                     type="text"
                                     className="input input-bordered w-full pl-10"
                                     placeholder="John Doe"
-                                    value={formData.fullName}
+                                    value={formData.fullname}
                                     onChange={(e) =>
-                                        setFormData({ ...formData, fullName: e.target.value })
+                                        setFormData({ ...formData, fullname: e.target.value })
                                     }
                                 />
                             </div>
@@ -152,6 +153,10 @@ const SignUpPage = () => {
                     </form>
                 </div>
             </div>
+            <AuthImagePattern
+                title="Join our community"
+                subtitle="Connect with friends, share moments, and stay in touch with your loved ones."
+            />
         </div>
     );
 };
