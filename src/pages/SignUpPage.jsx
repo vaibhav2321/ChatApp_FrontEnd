@@ -17,8 +17,6 @@ const SignUpPage = () => {
 
     const validateForm = () => {
         const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
-        console.log("asdfa",formData);
-        
 
         if( !formData.fullname.trim()) return toast.error("Full Name is required.");
         if( !formData.email.trim()) return toast.error("Email is required.");
